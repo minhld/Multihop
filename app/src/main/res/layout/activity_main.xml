@@ -37,6 +37,7 @@
         android:layout_height="150dp"
         android:id="@+id/infoText"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true" />
+        android:layout_alignParentBottom="true"
+        android:gravity="bottom" />
 
 </RelativeLayout>

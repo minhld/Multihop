@@ -95,10 +95,10 @@ public class JobHandler {
         public void peerDeviceListUpdated(Collection<WifiP2pDevice> deviceList) {
             jobSocketListener.peerListUpdated(deviceList);
 
-            // check if it is server, it won't connect but only listening
-            if (Utils.getConfig("role").equals("server")) {
-                return;
-            }
+//            // check if it is server, it won't connect but only listening
+//            if (Utils.getConfig("role").equals("server")) {
+//                return;
+//            }
 
             // if current device is client, it will auto connect through
             // the list of devices

@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
@@ -59,7 +60,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         ButterKnife.bind(this);
-        ButterKnife.setDebug(true);
+//        ButterKnife.setDebug(true);
+        infoText.setMovementMethod(new ScrollingMovementMethod());
 
         // handlers registration
         jobHandler = new JobHandler(this, mainUiHandler);
@@ -84,6 +86,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        deviceListAdapter = new WifiPeerListAdapter(this, R.layout.row_devices,
+                jobHandler.getConnector());
+        deviceList.setAdapter(deviceListAdapter);
+
         p2pBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -92,6 +98,22 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // reset app back to activate mode
+        jobHandler.actOnResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        // reset app to sleep mode
+        jobHandler.actOnPause();
     }
 
     /**
