@@ -197,6 +197,33 @@ public class WifiBroader extends BroadcastReceiver {
     }
 
     /**
+     * disconnect with a peer
+     *
+     * @param deviceName
+     * @param listener
+     */
+    public void disconnect(final String deviceName, final WifiP2pConnectionListener listener){
+        // close the current socket
+        mSocketHandler.dispose();
+
+        // dispose the group it connected to
+        mManager.removeGroup(mChannel, new WifiP2pManager.ActionListener() {
+            @Override
+            public void onSuccess() {
+                writeLog("disconnected with " + deviceName + " successfully");
+                if (listener != null) {
+                    listener.connectInfoReturned(0);
+                }
+            }
+
+            @Override
+            public void onFailure(int reason) {
+                writeLog("disconnected from " + deviceName + " failed");
+            }
+        });
+    }
+
+    /**
      * connect to an available group owner
      *
      * @param ip

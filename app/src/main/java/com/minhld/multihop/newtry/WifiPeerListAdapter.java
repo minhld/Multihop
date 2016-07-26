@@ -84,7 +84,7 @@ public class WifiPeerListAdapter extends ArrayAdapter<WifiP2pDevice> {
                 }
                 case WifiP2pDevice.CONNECTED: {
                     // just disconnect, no confirmation
-//                    wifiBroader.disconnect(device.deviceName, null);
+                    wifiBroader.disconnect(device.deviceName, null);
                     break;
                 }
                 case WifiP2pDevice.AVAILABLE: {
