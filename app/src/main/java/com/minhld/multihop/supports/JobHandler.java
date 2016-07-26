@@ -2,6 +2,7 @@ package com.minhld.multihop.supports;
 
 import android.app.Activity;
 import android.content.IntentFilter;
+import android.net.wifi.WifiManager;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.os.Handler;
 
@@ -67,6 +68,10 @@ public class JobHandler {
         // start dispatching jobs after decision maker select the available peers
 //        new JobDispatcher(context, mReceiver, serverHandler, dataParser,
 //                                useCluster, dataPath, jobPath).execute();
+    }
+
+    public void connectByNormalWiFi() {
+//        WifiManager wifiManager
     }
 
     /**

@@ -16,8 +16,6 @@ import com.minhld.multihop.supports.WifiBroadcaster;
 
 import java.util.List;
 
-// import com.minhld.job2p.supports.WifiBroadcaster;
-
 /**
  * Array adapter for ListFragment that maintains WifiP2pDevice list.
  */

@@ -98,6 +98,13 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+        wifiBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
     }
 
     @Override
