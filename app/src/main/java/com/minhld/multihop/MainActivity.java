@@ -1,6 +1,5 @@
 package com.minhld.multihop;
 
-import android.graphics.Bitmap;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.os.Handler;
 import android.os.Message;
@@ -22,10 +21,10 @@ import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
 
-    @BindView(R.id.p2pBtn)
+    @BindView(R.id.createGroupBtn)
     Button p2pBtn;
 
-    @BindView(R.id.wifiBtn)
+    @BindView(R.id.connectGroupBtn)
     Button wifiBtn;
 
     @BindView(R.id.deviceList)

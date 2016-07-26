@@ -12,7 +12,7 @@
         android:text="P2P Connect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/p2pBtn"
+        android:id="@+id/createGroupBtn"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true" />
 
@@ -20,15 +20,15 @@
         android:text="Wifi Connect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/wifiBtn"
+        android:id="@+id/connectGroupBtn"
         android:layout_alignParentTop="true"
-        android:layout_toStartOf="@+id/p2pBtn" />
+        android:layout_toStartOf="@+id/createGroupBtn" />
 
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/deviceList"
-        android:layout_below="@+id/p2pBtn"
+        android:layout_below="@+id/createGroupBtn"
         android:layout_alignParentStart="true"
         android:layout_above="@+id/infoText"/>
 

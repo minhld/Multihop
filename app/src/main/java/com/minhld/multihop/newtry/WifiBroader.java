@@ -5,17 +5,20 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.wifi.WpsInfo;
+import android.net.wifi.p2p.WifiP2pConfig;
+import android.net.wifi.p2p.WifiP2pDevice;
+import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
+import android.os.Handler;
 import android.widget.TextView;
 
-import com.minhld.multihop.supports.ClientSocketHandler;
-import com.minhld.multihop.supports.ServerSocketHandler;
 import com.minhld.multihop.supports.Utils;
-
-import org.w3c.dom.Text;
+import com.minhld.multihop.supports.WifiP2pConnectionListener;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Date;
 
 /**
@@ -27,7 +30,15 @@ public class WifiBroader extends BroadcastReceiver {
     WifiP2pManager.Channel mChannel;
     IntentFilter mIntentFilter;
 
+    SocketHandler mSocketHandler;
+    Handler mSocketUIListener;
+    BroadCastListener broadCastListener;
+
     TextView logText;
+
+    public void setSocketHandler(Handler skHandler) {
+        this.mSocketUIListener = skHandler;
+    }
 
     public WifiBroader(Activity c, TextView logText){
         this.logText = logText;
@@ -41,15 +52,50 @@ public class WifiBroader extends BroadcastReceiver {
         String action = intent.getAction();
 
         if (WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION.equals(action)) {
-
+            // Check to see if Wi-Fi is enabled and notify appropriate activity
+            int state = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE, -1);
+            if (state == WifiP2pManager.WIFI_P2P_STATE_ENABLED) {
+                // Wifi P2P is enabled
+                writeLog("wifi p2p is enabled");
+            } else {
+                // Wi-Fi P2P is not enabled
+                writeLog("wifi p2p is disabled");
+            }
         } else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
+            // Call WifiP2pManager.requestPeers() to get a list of current peers
+            mManager.requestPeers(mChannel, new WifiP2pManager.PeerListListener() {
+                @Override
+                public void onPeersAvailable(WifiP2pDeviceList peers) {
+                    Collection<WifiP2pDevice> deviceList = peers.getDeviceList();
+                    reloadDeviceList(deviceList);
+//
+                    if (broadCastListener != null){
+                        broadCastListener.peerDeviceListUpdated(deviceList);
+                    }
 
+                    writeLog(deviceList.size() + " devices was found");
+                }
+            });
         } else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
             mManager.requestConnectionInfo(mChannel, new WifiP2pManager.ConnectionInfoListener() {
                 @Override
                 public void onConnectionInfoAvailable(WifiP2pInfo info) {
                     if (info.groupFormed && info.isGroupOwner) {
-
+                        if (mSocketHandler != null && mSocketHandler.isSocketWorking() &&
+                                mSocketHandler.socketType == Utils.SocketType.SERVER) {
+                            writeLog("server is still be reused @ " + info.groupOwnerAddress.getHostAddress());
+                        } else {
+                            try {
+                                mSocketHandler = new ServerSocketHandler(mSocketUIListener);
+                                mSocketHandler.start();
+                                writeLog("become server @ " + info.groupOwnerAddress.getHostAddress() +
+                                        " port: " + Utils.SERVER_PORT);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                                writeLog("[wifi] error: " + e.getMessage());
+                                return;     // we don't enable transmission
+                            }
+                        }
                     } else if (info.groupFormed) {
 
                     } else {
@@ -58,10 +104,13 @@ public class WifiBroader extends BroadcastReceiver {
                 }
             });
         } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {
-
+            writeLog("device's wifi state changed");
         }
     }
 
+    /**
+     * this will create a group and itself be a Group Owner
+     */
     public void createGroup() {
         mManager.createGroup(mChannel, new WifiP2pManager.ActionListener() {
             @Override
@@ -89,6 +138,90 @@ public class WifiBroader extends BroadcastReceiver {
         });
     }
 
+    /**
+     * send the request
+     */
+    public void discoverPeers(){
+        this.mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
+
+            @Override
+            public void onSuccess() {
+                writeLog("discovery called successfully");
+            }
+
+            @Override
+            public void onFailure(int reason) {
+                switch (reason){
+                    case 0: {
+                        writeLog("discovery failed: operation failed due to an internal error");
+                        break;
+                    }
+                    case 1: {
+                        writeLog("discovery failed: p2p is unsupported on the device");
+                        break;
+                    }
+                    case 2: {
+                        writeLog("discovery failed: framework is busy and unable to service the request");
+                        break;
+                    }
+                }
+            }
+        });
+    }
+
+    public void connectToADevice(final WifiP2pDevice device, final WifiP2pConnectionListener listener) {
+        WifiP2pConfig config = new WifiP2pConfig();
+        config.deviceAddress = device.deviceAddress;
+        config.wps.setup = WpsInfo.PBC;
+
+        mManager.connect(mChannel, config, new WifiP2pManager.ActionListener() {
+
+            @Override
+            public void onSuccess() {
+                // WiFiDirectBroadcastReceiver will notify us. Ignore for now.
+                writeLog("connection established with " + device.deviceName + " successfully");
+
+                if (listener != null) {
+                    listener.connectInfoReturned(0);
+                }
+            }
+
+            @Override
+            public void onFailure(int reason) {
+                writeLog("connection with " + device.deviceName + " failed");
+                if (listener != null) {
+                    listener.connectInfoReturned(reason);
+                }
+            }
+        });
+    }
+
+    /**
+     * connect to an available group owner
+     *
+     * @param ip
+     * @param name
+     */
+    public void connect(final String ip, final String name) {
+        WifiP2pConfig config = new WifiP2pConfig();
+        config.deviceAddress = ip;
+        config.wps.setup = WpsInfo.PBC;
+
+        mManager.connect(mChannel, config, new WifiP2pManager.ActionListener() {
+
+            @Override
+            public void onSuccess() {
+                // WiFiDirectBroadcastReceiver will notify us. Ignore for now.
+                writeLog("connection established with " + name + " successfully");
+            }
+
+            @Override
+            public void onFailure(int reason) {
+                writeLog("connection with " + name + " failed");
+            }
+        });
+    }
+
     public IntentFilter getSingleIntentFilter() {
         if (mIntentFilter == null) {
             mIntentFilter = new IntentFilter();
@@ -101,8 +234,37 @@ public class WifiBroader extends BroadcastReceiver {
         return mIntentFilter;
     }
 
+    /**
+     * re-add the whole list of devices
+     *
+     * @param devices
+     */
+    private void reloadDeviceList(Collection<WifiP2pDevice> devices) {
+        Utils.connectedDevices.clear();
+
+        Utils.XDevice xDev = null;
+        for (WifiP2pDevice device : devices) {
+            // only try the CONNECTED devices
+            if (device.status == WifiP2pDevice.CONNECTED) {
+                xDev = new Utils.XDevice(device.deviceAddress, device.deviceName);
+                Utils.connectedDevices.put(device.deviceName, xDev);
+            }
+        }
+
+    }
+
+    public void setBroadCastListener(BroadCastListener pdlcListener){
+        this.broadCastListener = pdlcListener;
+    }
+
+    public interface BroadCastListener {
+        public void peerDeviceListUpdated(Collection<WifiP2pDevice> deviceList);
+        public void socketUpdated(Utils.SocketType socketType, boolean connected);
+    }
+
+
     public void writeLog(final String msg){
-        String outMsg = Utils.SDF.format(new Date()) + ": " + msg;
-        logText.setText(outMsg);
+        String outMsg = Utils.SDF.format(new Date()) + ": " + msg + "\n";
+        logText.append(outMsg);
     }
 }

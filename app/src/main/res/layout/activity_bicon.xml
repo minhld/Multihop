@@ -8,36 +8,45 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin" >
 
-    <Button
-        android:text="P2P Connect"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/p2pBtn"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:id="@+id/infoText"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:gravity="bottom" />
 
     <Button
-        android:text="Wifi Connect"
+        android:text="Create Group"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/wifiBtn"
+        android:layout_height="60dp"
+        android:id="@+id/createGroupBtn"
         android:layout_alignParentTop="true"
-        android:layout_toStartOf="@+id/p2pBtn" />
+        android:layout_toStartOf="@+id/discoverBtn" />
 
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/deviceList"
-        android:layout_below="@+id/p2pBtn"
         android:layout_alignParentStart="true"
-        android:layout_above="@+id/infoText"/>
+        android:layout_below="@+id/createGroupBtn"
+        android:layout_above="@+id/infoText" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:id="@+id/infoText"
+    <Button
+        android:text="Connect GO"
+        android:layout_width="wrap_content"
+        android:layout_height="60dp"
+        android:id="@+id/connectGroupBtn"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true" />
+
+    <Button
+        android:text="Discover"
+        android:layout_width="wrap_content"
+        android:layout_height="60dp"
+        android:id="@+id/discoverBtn"
+        android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:gravity="bottom" />
+        android:layout_marginEnd="114dp" />
 
 </RelativeLayout>
