@@ -7,10 +7,10 @@
     android:padding="6dip">
     <ImageView
         android:id="@+id/icon"
-        android:layout_width="28dp"
-        android:layout_height="28dp"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
         android:layout_marginRight="2dip"
-        android:src="@drawable/machine" />
+        android:src="@drawable/wifi" />
 
     <LinearLayout
         android:orientation="vertical"

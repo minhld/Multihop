@@ -83,7 +83,7 @@ public class WifiBroader extends BroadcastReceiver {
                     if (info.groupFormed && info.isGroupOwner) {
                         if (mSocketHandler != null && mSocketHandler.isSocketWorking() &&
                                 mSocketHandler.socketType == Utils.SocketType.SERVER) {
-                            writeLog("server is still be reused @ " + info.groupOwnerAddress.getHostAddress());
+                            writeLog("reuse server @ " + info.groupOwnerAddress.getHostAddress());
                         } else {
                             try {
                                 mSocketHandler = new ServerSocketHandler(mSocketUIListener);
@@ -97,7 +97,9 @@ public class WifiBroader extends BroadcastReceiver {
                             }
                         }
                     } else if (info.groupFormed) {
-
+                        mSocketHandler = new ClientSocketHandler(mSocketUIListener, info.groupOwnerAddress);
+                        mSocketHandler.start();
+                        broadCastListener.socketUpdated(Utils.SocketType.CLIENT, true);
                     } else {
 
                     }

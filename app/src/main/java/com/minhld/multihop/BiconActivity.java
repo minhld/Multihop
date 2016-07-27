@@ -13,6 +13,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.minhld.multihop.newtry.WifiBroader;
+import com.minhld.multihop.newtry.WifiNetworkListAdapter;
 import com.minhld.multihop.newtry.WifiPeerListAdapter;
 import com.minhld.multihop.supports.Utils;
 
@@ -31,8 +32,17 @@ public class BiconActivity extends AppCompatActivity {
     @BindView(R.id.connectGroupBtn)
     Button connectGroupBtn;
 
+    @BindView(R.id.searchWiFiBtn)
+    Button searchWiFiBtn;
+
+    @BindView(R.id.connectWiFiBtn)
+    Button connectWiFiBtn;
+
     @BindView(R.id.deviceList)
     ListView deviceList;
+
+    @BindView(R.id.wifiList)
+    ListView wifiList;
 
     @BindView(R.id.infoText)
     TextView infoText;
@@ -41,6 +51,7 @@ public class BiconActivity extends AppCompatActivity {
     IntentFilter mIntentFilter;
 
     WifiPeerListAdapter deviceListAdapter;
+    WifiNetworkListAdapter networkListAdapter;
 
     Handler mainUiHandler = new Handler() {
         @Override
@@ -84,8 +95,13 @@ public class BiconActivity extends AppCompatActivity {
         });
         mIntentFilter = wifiBroader.getSingleIntentFilter();
 
+        // device list
         deviceListAdapter = new WifiPeerListAdapter(this, R.layout.row_devices, wifiBroader);
         deviceList.setAdapter(deviceListAdapter);
+
+        // WiFi network list
+        networkListAdapter = new WifiNetworkListAdapter(this, R.layout.row_wifi, wifiBroader);
+        wifiList.setAdapter(networkListAdapter);
 
         createGroupBtn.setOnClickListener(new View.OnClickListener() {
             @Override
