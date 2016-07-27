@@ -22,18 +22,18 @@ import java.util.List;
 public class WifiNetworkListAdapter extends ArrayAdapter<ScanResult> {
     private Context context;
     private List<ScanResult> items;
-    private WifiBroader wifiBroader;
+    private WifiConnector wifiWiFiBroader;
 
     /**
      * @param context
      * @param textViewResourceId
      */
-    public WifiNetworkListAdapter(Context context, int textViewResourceId, WifiBroader wifiBroader) {
+    public WifiNetworkListAdapter(Context context, int textViewResourceId, WifiConnector wifiBroader) {
         super(context, textViewResourceId/*, objects*/);
 
         this.context = context;
         //this.items = objects;
-        this.wifiBroader = wifiBroader;
+        this.wifiWiFiBroader = wifiBroader;
     }
 
 //    @Override
@@ -78,6 +78,7 @@ public class WifiNetworkListAdapter extends ArrayAdapter<ScanResult> {
         @Override
         public void onClick(View v) {
             // connect
+            wifiWiFiBroader.connectWifiNetwork(this.result);
         }
     }
 

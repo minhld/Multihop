@@ -116,7 +116,7 @@ public class BiconActivity extends AppCompatActivity {
         });
 
         // WiFi network list
-        networkListAdapter = new WifiNetworkListAdapter(this, R.layout.row_wifi, wifiBroader);
+        networkListAdapter = new WifiNetworkListAdapter(this, R.layout.row_wifi, orgWifiBroader);
         wifiList.setAdapter(networkListAdapter);
 
         createGroupBtn.setOnClickListener(new View.OnClickListener() {
@@ -153,7 +153,7 @@ public class BiconActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // connect to one of the Wifi networks
-
+                wifiBroader.requestGroupInfo();
             }
         });
     }

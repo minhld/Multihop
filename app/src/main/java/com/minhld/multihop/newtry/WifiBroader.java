@@ -9,6 +9,7 @@ import android.net.wifi.WpsInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
+import android.net.wifi.p2p.WifiP2pGroup;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Handler;
@@ -136,6 +137,16 @@ public class WifiBroader extends BroadcastReceiver {
                         break;
                     }
                 }
+            }
+        });
+    }
+
+    public void requestGroupInfo() {
+        mManager.requestGroupInfo(mChannel, new WifiP2pManager.GroupInfoListener() {
+            @Override
+            public void onGroupInfoAvailable(WifiP2pGroup group) {
+                writeLog("[group info] name: " + group.getNetworkName() + "; " +
+                        "password " + group.getPassphrase());
             }
         });
     }

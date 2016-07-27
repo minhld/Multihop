@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.wifi.ScanResult;
+import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.widget.TextView;
 
@@ -36,6 +37,9 @@ public class WifiConnector {
         c.registerReceiver(mWifiScanReceiver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
     }
 
+    /**
+     * receive a wifi network list
+     */
     private BroadcastReceiver mWifiScanReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context c, Intent intent) {
@@ -50,6 +54,21 @@ public class WifiConnector {
 
     public void getWifiConnections() {
         mWifiManager.startScan();
+    }
+
+    public void connectWifiNetwork(ScanResult wifiNetwork) {
+        writeLog("attempt connecting to " + wifiNetwork.SSID);
+        WifiConfiguration wifiConfiguration = new WifiConfiguration();
+        wifiConfiguration.SSID = "\"" + wifiNetwork.SSID + "\"";
+        wifiConfiguration.wepKeys[0] = "\"dH40fHdP\"";
+        wifiConfiguration.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
+        int netId = mWifiManager.addNetwork(wifiConfiguration);
+
+        mWifiManager.disconnect();
+        mWifiManager.enableNetwork(netId, true);
+        mWifiManager.reconnect();
+
+        writeLog("wait for establishment...");
     }
 
     public interface WiFiScanListener {
