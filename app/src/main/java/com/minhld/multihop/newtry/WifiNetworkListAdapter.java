@@ -5,7 +5,7 @@ package com.minhld.multihop.newtry;
  */
 
 import android.content.Context;
-import android.net.wifi.p2p.WifiP2pDevice;
+import android.net.wifi.ScanResult;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,9 +19,9 @@ import java.util.List;
 /**
  * Array adapter for ListFragment that maintains WifiP2pDevice list.
  */
-public class WifiNetworkListAdapter extends ArrayAdapter<WifiP2pDevice> {
+public class WifiNetworkListAdapter extends ArrayAdapter<ScanResult> {
     private Context context;
-    private List<WifiP2pDevice> items;
+    private List<ScanResult> items;
     private WifiBroader wifiBroader;
 
     /**
@@ -47,20 +47,20 @@ public class WifiNetworkListAdapter extends ArrayAdapter<WifiP2pDevice> {
         if (v == null) {
             LayoutInflater vi = (LayoutInflater) context.getSystemService(
                     Context.LAYOUT_INFLATER_SERVICE);
-            v = vi.inflate(R.layout.row_devices, null);
+            v = vi.inflate(R.layout.row_wifi, null);
         }
-        WifiP2pDevice device = this.getItem(position);
-        if (device != null) {
+        ScanResult result = this.getItem(position);
+        if (result != null) {
             TextView top = (TextView) v.findViewById(R.id.device_name);
             TextView bottom = (TextView) v.findViewById(R.id.device_details);
             if (top != null) {
-                top.setText(device.deviceName);
+                top.setText(result.SSID);
             }
             if (bottom != null) {
-                bottom.setText(getDeviceStatus(device.status));
+                bottom.setText(result.capabilities);
             }
         }
-        v.setOnClickListener(new DeviceClickListener(device));
+        v.setOnClickListener(new DeviceClickListener(result));
         return v;
     }
 
@@ -69,60 +69,16 @@ public class WifiNetworkListAdapter extends ArrayAdapter<WifiP2pDevice> {
      * to the device described by this object
      */
     private class DeviceClickListener implements View.OnClickListener {
-        WifiP2pDevice device;
+        ScanResult result;
 
-        public DeviceClickListener(WifiP2pDevice device) {
-            this.device = device;
+        public DeviceClickListener(ScanResult result) {
+            this.result = result;
         }
 
         @Override
         public void onClick(View v) {
-            switch (device.status){
-                case WifiP2pDevice.INVITED: {
-                    //mWifiBroadcaster.cancelConnection(device.deviceName, null);
-                    break;
-                }
-                case WifiP2pDevice.CONNECTED: {
-                    // just disconnect, no confirmation
-                    wifiBroader.disconnect(device.deviceName, null);
-                    break;
-                }
-                case WifiP2pDevice.AVAILABLE: {
-                    wifiBroader.connectToADevice(device, null);
-                    break;
-                }
-                case WifiP2pDevice.UNAVAILABLE: {
-                    // nothing todo here
-                    break;
-                }
-                case WifiP2pDevice.FAILED: {
-                    // attempting to connect
-                    wifiBroader.connectToADevice(device, null);
-                    break;
-                }
-            }
+            // connect
         }
     }
 
-    /**
-     * return device status in String rather than number
-     * @param deviceStatus
-     * @return
-     */
-    private static String getDeviceStatus(int deviceStatus) {
-        switch (deviceStatus) {
-            case WifiP2pDevice.AVAILABLE:
-                return "Available";
-            case WifiP2pDevice.INVITED:
-                return "Invited";
-            case WifiP2pDevice.CONNECTED:
-                return "Connected";
-            case WifiP2pDevice.FAILED:
-                return "Failed";
-            case WifiP2pDevice.UNAVAILABLE:
-                return "Unavailable";
-            default:
-                return "Unknown";
-        }
-    }
 }

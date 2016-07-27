@@ -1,6 +1,7 @@
 package com.minhld.multihop;
 
 import android.content.IntentFilter;
+import android.net.wifi.ScanResult;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.os.Handler;
 import android.os.Message;
@@ -13,11 +14,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.minhld.multihop.newtry.WifiBroader;
+import com.minhld.multihop.newtry.WifiConnector;
 import com.minhld.multihop.newtry.WifiNetworkListAdapter;
 import com.minhld.multihop.newtry.WifiPeerListAdapter;
 import com.minhld.multihop.supports.Utils;
 
 import java.util.Collection;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -48,6 +51,7 @@ public class BiconActivity extends AppCompatActivity {
     TextView infoText;
 
     WifiBroader wifiBroader;
+    WifiConnector orgWifiBroader;
     IntentFilter mIntentFilter;
 
     WifiPeerListAdapter deviceListAdapter;
@@ -78,6 +82,7 @@ public class BiconActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         infoText.setMovementMethod(new ScrollingMovementMethod());
 
+        // ------ Prepare for WiFi Direct ------
         wifiBroader = new WifiBroader(this, infoText);
         wifiBroader.setSocketHandler(mainUiHandler);
         wifiBroader.setBroadCastListener(new WifiBroader.BroadCastListener() {
@@ -98,6 +103,17 @@ public class BiconActivity extends AppCompatActivity {
         // device list
         deviceListAdapter = new WifiPeerListAdapter(this, R.layout.row_devices, wifiBroader);
         deviceList.setAdapter(deviceListAdapter);
+
+        // ------ Prepared for Original WiFi ------
+        orgWifiBroader = new WifiConnector(this, infoText);
+        orgWifiBroader.setmWifiScanListener(new WifiConnector.WiFiScanListener() {
+            @Override
+            public void listReceived(List<ScanResult> mScanResults) {
+                networkListAdapter.clear();
+                networkListAdapter.addAll(mScanResults);
+                networkListAdapter.notifyDataSetChanged();
+            }
+        });
 
         // WiFi network list
         networkListAdapter = new WifiNetworkListAdapter(this, R.layout.row_wifi, wifiBroader);
@@ -122,6 +138,22 @@ public class BiconActivity extends AppCompatActivity {
             public void onClick(View v) {
 //                wifiBroader.connect("7a:f8:82:9e:e0:e9", "minh-owner");
                 wifiBroader.connect("d2:17:c2:76:0b:e7", "Android_f9d4");
+            }
+        });
+
+        searchWiFiBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // search for Wifi network list
+                orgWifiBroader.getWifiConnections();
+            }
+        });
+
+        connectWiFiBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // connect to one of the Wifi networks
+
             }
         });
     }
