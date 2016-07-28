@@ -145,7 +145,8 @@ public class WifiBroader extends BroadcastReceiver {
         mManager.requestGroupInfo(mChannel, new WifiP2pManager.GroupInfoListener() {
             @Override
             public void onGroupInfoAvailable(WifiP2pGroup group) {
-                writeLog("[group info] name: " + group.getNetworkName() + "; " +
+                writeLog("[group info] owner: " + group.isGroupOwner() + "; " +
+                        "name: " + group.getNetworkName() + "; " +
                         "password " + group.getPassphrase());
             }
         });

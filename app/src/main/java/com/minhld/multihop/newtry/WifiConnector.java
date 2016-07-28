@@ -46,6 +46,12 @@ public class WifiConnector {
             if (intent.getAction().equals(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION)) {
                 List<ScanResult> mScanResults = mWifiManager.getScanResults();
                 if (scanListener != null) {
+                    // only keep wifi direct network
+                    for (int i = mScanResults.size() - 1; i >= 0; i--) {
+                        if (!mScanResults.get(i).SSID.toLowerCase().contains("direct")) {
+                            mScanResults.remove(i);
+                        }
+                    }
                     scanListener.listReceived(mScanResults);
                 }
             }
@@ -60,13 +66,23 @@ public class WifiConnector {
         writeLog("attempt connecting to " + wifiNetwork.SSID);
         WifiConfiguration wifiConfiguration = new WifiConfiguration();
         wifiConfiguration.SSID = "\"" + wifiNetwork.SSID + "\"";
-        wifiConfiguration.wepKeys[0] = "\"dH40fHdP\"";
-        wifiConfiguration.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
+        wifiConfiguration.preSharedKey = "\"dH40fHdP\"";
+//        wifiConfiguration.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
         int netId = mWifiManager.addNetwork(wifiConfiguration);
 
-        mWifiManager.disconnect();
-        mWifiManager.enableNetwork(netId, true);
-        mWifiManager.reconnect();
+        List<WifiConfiguration> list = mWifiManager.getConfiguredNetworks();
+        for( WifiConfiguration i : list ) {
+            if(i.SSID != null && i.SSID.equals("\"" + wifiNetwork.SSID + "\"")) {
+                mWifiManager.disconnect();
+                mWifiManager.enableNetwork(i.networkId, true);
+                mWifiManager.reconnect();
+                break;
+            }
+        }
+
+//        mWifiManager.disconnect();
+//        mWifiManager.enableNetwork(netId, true);
+//        mWifiManager.reconnect();
 
         writeLog("wait for establishment...");
     }
