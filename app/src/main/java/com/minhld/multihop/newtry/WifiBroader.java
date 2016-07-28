@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.minhld.multihop.supports.Utils;
 import com.minhld.multihop.supports.WifiP2pConnectionListener;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Date;
@@ -303,6 +304,32 @@ public class WifiBroader extends BroadcastReceiver {
         public void socketUpdated(Utils.SocketType socketType, boolean connected);
     }
 
+    public void writeString(String msg) {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        byte[] data = msg.getBytes();
+        byte[] lengthBytes = Utils.intToBytes(data.length);
+        bos.write(lengthBytes, 0, lengthBytes.length);
+        bos.write(data, 0, data.length);
+        sendObject(bos.toByteArray());
+    }
+
+    /**
+     * this function will send an object through socket to the server
+     *
+     * @param st should be a serializable object
+     */
+    public void sendObject(Object st) {
+        if (st instanceof byte[]) {
+            mSocketHandler.write((byte[])st);
+        }else {
+            try {
+                // we need to serialize it to binary array before dispatching it
+                mSocketHandler.write(Utils.serialize(st));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     public void writeLog(final String msg){
         String outMsg = Utils.SDF.format(new Date()) + ": " + msg + "\n";

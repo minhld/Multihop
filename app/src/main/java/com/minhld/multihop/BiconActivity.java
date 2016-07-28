@@ -61,6 +61,16 @@ public class BiconActivity extends AppCompatActivity {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
+                case Utils.MESSAGE_READ_SERVER: {
+                    String strMsg = msg.obj.toString();
+                    UITools.writeLog(BiconActivity.this, infoText, "[server] " + strMsg);
+                    break;
+                }
+                case Utils.MESSAGE_READ_CLIENT: {
+                    String strMsg = msg.obj.toString();
+                    UITools.writeLog(BiconActivity.this, infoText, "[client] " + strMsg);
+                    break;
+                }
                 case Utils.MAIN_JOB_DONE: {
 
                     break;
@@ -136,8 +146,7 @@ public class BiconActivity extends AppCompatActivity {
         connectGroupBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                wifiBroader.connect("7a:f8:82:9e:e0:e9", "minh-owner");
-                wifiBroader.connect("d2:17:c2:76:0b:e7", "Android_f9d4");
+                wifiBroader.writeString("client report!");
             }
         });
 
