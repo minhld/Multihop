@@ -75,7 +75,7 @@ public class WifiConnector {
         writeLog("attempt connecting to " + wifiNetwork.SSID);
         WifiConfiguration wifiConfiguration = new WifiConfiguration();
         wifiConfiguration.SSID = "\"" + wifiNetwork.SSID + "\"";
-        wifiConfiguration.preSharedKey = "\"" + password + "\""; //"\"dH40fHdP\"";
+        wifiConfiguration.preSharedKey = "\"" + password + "\"";
         int netId = mWifiManager.addNetwork(wifiConfiguration);
 
         List<WifiConfiguration> list = mWifiManager.getConfiguredNetworks();

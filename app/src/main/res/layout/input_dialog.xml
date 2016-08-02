@@ -19,5 +19,5 @@
         android:layout_height="wrap_content"
         android:hint="Password"
         android:padding="10dp"
-        android:textColor="#ccc"/>
+        android:textColorHint="#ccc"/>
 </LinearLayout>
