@@ -13,6 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.minhld.multihop.R;
+import com.minhld.multihop.UITools;
 
 import java.util.List;
 
@@ -78,7 +79,13 @@ public class WifiNetworkListAdapter extends ArrayAdapter<ScanResult> {
         @Override
         public void onClick(View v) {
             // connect
-            wifiWiFiBroader.connectWifiNetwork(this.result);
+            UITools.showInputDialog(WifiNetworkListAdapter.this.context, new UITools.InputDialogListener() {
+                @Override
+                public void inputDone(String resultStr) {
+                    wifiWiFiBroader.connectWifiNetwork(DeviceClickListener.this.result, resultStr);
+                }
+            }, "dH40fHdP");
+
         }
     }
 
