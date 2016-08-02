@@ -63,12 +63,12 @@ public class BiconActivity extends AppCompatActivity {
             switch (msg.what) {
                 case Utils.MESSAGE_READ_SERVER: {
                     String strMsg = msg.obj.toString();
-                    UITools.writeLog(BiconActivity.this, infoText, "[server] " + strMsg);
+                    UITools.writeLog(BiconActivity.this, infoText, strMsg);
                     break;
                 }
                 case Utils.MESSAGE_READ_CLIENT: {
                     String strMsg = msg.obj.toString();
-                    UITools.writeLog(BiconActivity.this, infoText, "[client] " + strMsg);
+                    UITools.writeLog(BiconActivity.this, infoText, strMsg);
                     break;
                 }
                 case Utils.MAIN_JOB_DONE: {
@@ -146,7 +146,7 @@ public class BiconActivity extends AppCompatActivity {
         connectGroupBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                wifiBroader.writeString("client report!");
+                wifiBroader.writeString("sent a ACK :)");
             }
         });
 

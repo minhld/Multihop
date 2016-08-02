@@ -37,6 +37,7 @@ public class WifiBroader extends BroadcastReceiver {
     BroadCastListener broadCastListener;
 
     TextView logText;
+    String deviceName;
 
     public void setSocketHandler(Handler skHandler) {
         this.mSocketUIListener = skHandler;
@@ -92,6 +93,7 @@ public class WifiBroader extends BroadcastReceiver {
                                 mSocketHandler.start();
                                 writeLog("become server @ " + info.groupOwnerAddress.getHostAddress() +
                                         " port: " + Utils.SERVER_PORT);
+                                deviceName = "server";
                             } catch (IOException e) {
                                 e.printStackTrace();
                                 writeLog("[wifi] error: " + e.getMessage());
@@ -101,6 +103,8 @@ public class WifiBroader extends BroadcastReceiver {
                     } else if (info.groupFormed) {
                         mSocketHandler = new ClientSocketHandler(mSocketUIListener, info.groupOwnerAddress);
                         mSocketHandler.start();
+                        deviceName = "client-" + (int)(Math.random() * 100);
+                        writeLog("become client with name " + deviceName);
                         broadCastListener.socketUpdated(Utils.SocketType.CLIENT, true);
                     } else {
 
@@ -306,7 +310,7 @@ public class WifiBroader extends BroadcastReceiver {
 
     public void writeString(String msg) {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        byte[] data = msg.getBytes();
+        byte[] data = ("[" + deviceName + "] " + msg).getBytes();
         byte[] lengthBytes = Utils.intToBytes(data.length);
         bos.write(lengthBytes, 0, lengthBytes.length);
         bos.write(data, 0, data.length);
