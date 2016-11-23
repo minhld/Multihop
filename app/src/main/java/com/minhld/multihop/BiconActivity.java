@@ -154,7 +154,7 @@ public class BiconActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // search for Wifi network list
-                orgWifiBroader.getWifiConnections();
+                orgWifiBroader.getWifiConnections(BiconActivity.this);
             }
         });
 

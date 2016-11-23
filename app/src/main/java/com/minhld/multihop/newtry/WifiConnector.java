@@ -1,5 +1,6 @@
 package com.minhld.multihop.newtry;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -10,6 +11,7 @@ import android.net.wifi.SupplicantState;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.support.v4.app.ActivityCompat;
 import android.widget.TextView;
 
 import com.minhld.multihop.supports.Utils;
@@ -67,7 +69,11 @@ public class WifiConnector {
         }
     };
 
-    public void getWifiConnections() {
+    public void getWifiConnections(Activity activity) {
+        ActivityCompat.requestPermissions(activity,
+                new String[] { Manifest.permission.ACCESS_COARSE_LOCATION },
+                0);
+
         mWifiManager.startScan();
     }
 
