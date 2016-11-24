@@ -32,17 +32,20 @@ public class BiconActivity extends AppCompatActivity {
     @BindView(R.id.discoverBtn)
     Button discoverBtn;
 
+    @BindView(R.id.getDirectInfoBtn)
+    Button getDirectInfoBtn;
+
     @BindView(R.id.sendWifiDirectBtn)
     Button sendWifiDirectBtn;
 
     @BindView(R.id.searchWiFiBtn)
     Button searchWiFiBtn;
 
-    @BindView(R.id.connectWiFiBtn)
-    Button connectWiFiBtn;
-
     @BindView(R.id.getWiFiInfoBtn)
     Button getWiFiInfoBtn;
+
+    @BindView(R.id.sendWifiDataBtn)
+    Button sendWiFiDataBtn;
 
     @BindView(R.id.deviceList)
     ListView deviceList;
@@ -147,6 +150,13 @@ public class BiconActivity extends AppCompatActivity {
             }
         });
 
+        getDirectInfoBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                wifiBroader.requestGroupInfo();
+            }
+        });
+
         sendWifiDirectBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -162,19 +172,19 @@ public class BiconActivity extends AppCompatActivity {
             }
         });
 
-        connectWiFiBtn.setOnClickListener(new View.OnClickListener() {
+        getWiFiInfoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
             }
         });
 
-        getWiFiInfoBtn.setOnClickListener(new View.OnClickListener() {
+        sendWiFiDataBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // connect to one of the Wifi networks
                 // wifiBroader.requestGroupInfo();
-                orgWifiBroader.writeLog("sent a WiFi ACK :)");
+                orgWifiBroader.writeString("sent a WiFi ACK :)");
             }
         });
     }

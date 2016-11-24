@@ -31,7 +31,8 @@ import java.util.List;
  */
 
 public class WifiConnector {
-    private static String SERVER_IP = "192.168.49.1";
+    public static final String SERVER_IP = "144.39.254.119";// "192.168.49.1";
+    public static final String PASSWORD = "EWat5Nhr";
 
     WifiManager mWifiManager;
     WiFiScanListener scanListener;

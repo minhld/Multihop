@@ -21,7 +21,6 @@ import java.util.List;
  * Array adapter for ListFragment that maintains WifiP2pDevice list.
  */
 public class WifiNetworkListAdapter extends ArrayAdapter<ScanResult> {
-    private final String PASSWORD = "qVK5TkO9";
     private Context context;
     private List<ScanResult> items;
     private WifiConnector wifiWiFiBroader;
@@ -85,7 +84,7 @@ public class WifiNetworkListAdapter extends ArrayAdapter<ScanResult> {
                 public void inputDone(String resultStr) {
                     wifiWiFiBroader.connectWifiNetwork(DeviceClickListener.this.result, resultStr);
                 }
-            }, PASSWORD);
+            }, WifiConnector.PASSWORD);
 
         }
     }
