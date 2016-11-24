@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.createGroupBtn)
     Button p2pBtn;
 
-    @BindView(R.id.connectGroupBtn)
+    @BindView(R.id.sendWifiDirectBtn)
     Button wifiBtn;
 
     @BindView(R.id.deviceList)

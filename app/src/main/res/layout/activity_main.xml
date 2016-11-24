@@ -20,7 +20,7 @@
         android:text="Wifi Connect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/connectGroupBtn"
+        android:id="@+id/sendWifiDirectBtn"
         android:layout_alignParentTop="true"
         android:layout_toStartOf="@+id/createGroupBtn" />
 

@@ -12,6 +12,7 @@ import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.support.v4.app.ActivityCompat;
+import android.text.format.Formatter;
 import android.widget.TextView;
 
 import com.minhld.multihop.supports.Utils;
@@ -63,6 +64,7 @@ public class WifiConnector {
             } else if (intent.getAction().equals(WifiManager.SUPPLICANT_STATE_CHANGED_ACTION)) {
                 SupplicantState state = intent.getParcelableExtra(WifiManager.EXTRA_NEW_STATE);
                 if (SupplicantState.isValidState(state) && state == SupplicantState.COMPLETED) {
+                    // when a wifi connection is established
                     boolean connected = checkConnectedToDesiredWifi(c);
                 }
             }
@@ -106,7 +108,10 @@ public class WifiConnector {
         WifiInfo wifi = wifiManager.getConnectionInfo();
         if (wifi != null) {
             writeLog("connected to: " + wifi.getSSID() + "; " +
-                    "bssid: " + wifi.getBSSID());
+                    "bssid: " + wifi.getBSSID() + "; " +
+                    "IP: " + Formatter.formatIpAddress(wifi.getIpAddress()) + "; " +
+                    "freq: " + wifi.getFrequency() + "MHz; " +
+                    "speed: " + wifi.getLinkSpeed() + "Mbps; ");
         }
         return connected;
     }

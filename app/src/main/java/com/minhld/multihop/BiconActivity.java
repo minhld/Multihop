@@ -32,14 +32,14 @@ public class BiconActivity extends AppCompatActivity {
     @BindView(R.id.discoverBtn)
     Button discoverBtn;
 
-    @BindView(R.id.connectGroupBtn)
-    Button connectGroupBtn;
+    @BindView(R.id.sendWifiDirectBtn)
+    Button sendWifiDirectBtn;
 
     @BindView(R.id.searchWiFiBtn)
     Button searchWiFiBtn;
 
-    @BindView(R.id.connectWiFiBtn)
-    Button connectWiFiBtn;
+    @BindView(R.id.getWiFiInfoBtn)
+    Button getWiFiInfoBtn;
 
     @BindView(R.id.deviceList)
     ListView deviceList;
@@ -143,7 +143,7 @@ public class BiconActivity extends AppCompatActivity {
             }
         });
 
-        connectGroupBtn.setOnClickListener(new View.OnClickListener() {
+        sendWifiDirectBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 wifiBroader.writeString("sent a ACK :)");
@@ -158,7 +158,7 @@ public class BiconActivity extends AppCompatActivity {
             }
         });
 
-        connectWiFiBtn.setOnClickListener(new View.OnClickListener() {
+        getWiFiInfoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // connect to one of the Wifi networks
