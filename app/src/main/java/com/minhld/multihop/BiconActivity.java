@@ -38,6 +38,9 @@ public class BiconActivity extends AppCompatActivity {
     @BindView(R.id.searchWiFiBtn)
     Button searchWiFiBtn;
 
+    @BindView(R.id.connectWiFiBtn)
+    Button connectWiFiBtn;
+
     @BindView(R.id.getWiFiInfoBtn)
     Button getWiFiInfoBtn;
 
@@ -116,6 +119,7 @@ public class BiconActivity extends AppCompatActivity {
 
         // ------ Prepared for Original WiFi ------
         orgWifiBroader = new WifiConnector(this, infoText);
+        orgWifiBroader.setSocketHandler(mainUiHandler);
         orgWifiBroader.setmWifiScanListener(new WifiConnector.WiFiScanListener() {
             @Override
             public void listReceived(List<ScanResult> mScanResults) {
@@ -158,11 +162,19 @@ public class BiconActivity extends AppCompatActivity {
             }
         });
 
+        connectWiFiBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
         getWiFiInfoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // connect to one of the Wifi networks
-                wifiBroader.requestGroupInfo();
+                // wifiBroader.requestGroupInfo();
+                orgWifiBroader.writeLog("sent a WiFi ACK :)");
             }
         });
     }

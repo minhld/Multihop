@@ -11,12 +11,17 @@ import android.net.wifi.SupplicantState;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.text.format.Formatter;
 import android.widget.TextView;
 
 import com.minhld.multihop.supports.Utils;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -26,11 +31,20 @@ import java.util.List;
  */
 
 public class WifiConnector {
+    private static String SERVER_IP = "192.168.49.1";
 
     WifiManager mWifiManager;
     WiFiScanListener scanListener;
 
+    SocketHandler mSocketHandler;
+    Handler mSocketUIListener;
+
+    String deviceName;
     TextView logText;
+
+    public void setSocketHandler(Handler skHandler) {
+        this.mSocketUIListener = skHandler;
+    }
 
     public void setmWifiScanListener(WiFiScanListener scanListener) {
         this.scanListener = scanListener;
@@ -107,12 +121,23 @@ public class WifiConnector {
 
         WifiInfo wifi = wifiManager.getConnectionInfo();
         if (wifi != null) {
-            writeLog("connected to: " + wifi.getSSID() + "; " +
+            deviceName = wifi.getSSID();
+            writeLog("connected to: " + deviceName + "; " +
                     "bssid: " + wifi.getBSSID() + "; " +
                     "IP: " + Formatter.formatIpAddress(wifi.getIpAddress()) + "; " +
                     "freq: " + wifi.getFrequency() + "MHz; " +
                     "speed: " + wifi.getLinkSpeed() + "Mbps; ");
         }
+
+        // create client socket
+        try {
+            mSocketHandler = new ClientSocketHandler(mSocketUIListener, InetAddress.getByName(SERVER_IP));
+            mSocketHandler.start();
+        } catch (UnknownHostException uhEx) {
+            writeLog("exception: " + uhEx.getMessage());
+            uhEx.printStackTrace();
+        }
+
         return connected;
     }
 
@@ -125,4 +150,30 @@ public class WifiConnector {
         logText.append(outMsg);
     }
 
+    public void writeString(String msg) {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        byte[] data = ("[" + deviceName + "] " + msg).getBytes();
+        byte[] lengthBytes = Utils.intToBytes(data.length);
+        bos.write(lengthBytes, 0, lengthBytes.length);
+        bos.write(data, 0, data.length);
+        sendObject(bos.toByteArray());
+    }
+
+    /**
+     * this function will send an object through socket to the server
+     *
+     * @param st should be a serializable object
+     */
+    public void sendObject(Object st) {
+        if (st instanceof byte[]) {
+            mSocketHandler.write((byte[])st);
+        }else {
+            try {
+                // we need to serialize it to binary array before dispatching it
+                mSocketHandler.write(Utils.serialize(st));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }
